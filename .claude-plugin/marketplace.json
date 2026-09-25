@@ -1,0 +1,12 @@
+{
+  "name": "rogulia-skills",
+  "description": "Agent skills by Iurii Rogulia. Install only the ones you need.",
+  "owner": { "name": "Iurii Rogulia", "url": "https://iurii.rogulia.fi" },
+  "plugins": [
+    {
+      "name": "seo-geo-optimization",
+      "source": "./seo-geo-optimization",
+      "description": "Evidence-based SEO and GEO rules for search engines and AI answer engines, from official vendor docs, with an audit procedure."
+    }
+  ]
+}

@@ -18,7 +18,7 @@ index and AI controls, canonicals and redirects, sitemaps and rendering, interna
 structured data, commerce and agents, measurement and diagnostics, myths, and the audit procedure. There is also an
 engine reference with crawler tokens and a source list.
 
-**Install:** see the [repository README](../README.md#install).
+**Install:** see the [repository README](../README.md#install-only-the-skills-you-need): Claude Code plugin, Codex installer, or copy this folder.
 
 **Maintained by** [Iurii Rogulia](https://iurii.rogulia.fi). Want it applied to your site by a human?
 [SEO/GEO audit](https://iurii.rogulia.fi/services/seo-geo-audit).
