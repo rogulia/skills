@@ -1,0 +1,11 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "seo-geo-optimization",
+  "version": "1.0.0",
+  "description": "Evidence-based SEO and GEO rules for search engines and AI answer engines, built from official vendor documentation, with an audit procedure.",
+  "author": { "name": "Iurii Rogulia", "url": "https://iurii.rogulia.fi" },
+  "homepage": "https://github.com/rogulia/skills/tree/main/seo-geo-optimization",
+  "repository": "https://github.com/rogulia/skills",
+  "license": "CC-BY-4.0",
+  "keywords": ["seo", "geo", "generative-engine-optimization", "ai-search", "technical-seo", "llms-txt", "agent-skills"]
+}

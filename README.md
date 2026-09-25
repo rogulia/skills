@@ -1,9 +1,10 @@
 # Agent Skills
 
-Skills for AI coding agents such as Claude Code, Codex and other tools that support the open
-[Agent Skills](https://agentskills.io/specification) format. Each skill is a folder with a `SKILL.md` and reference files.
+Skills for AI agents: Claude Code, Codex, Cursor and any tool that supports the open
+[Agent Skills](https://agentskills.io/specification) format. Each skill is packaged as a portable
+[Agent Plugin](https://agent-plugins.org), so it installs through a plugin marketplace or as a plain skill folder.
 
-These are written **for agents, not for people**: compressed, rule-level, with sources, so an agent can apply them
+These are written **for agents, not for people**: compressed, rule-level and sourced, so an agent can apply them
 directly instead of relying on its training memory.
 
 ## Skills
@@ -14,31 +15,32 @@ directly instead of relying on its training memory.
 
 ## Install only the skills you need
 
-Every skill is independent. Install one, several or all.
+Every skill is independent. Install one, several or all. Replace `seo-geo-optimization` with the skill you want.
 
-### Claude Code: plugin marketplace
-
-Each skill is also a plugin in this repository's marketplace. Add the marketplace once, then install skills by name:
+### Claude Code
 
 ```text
 /plugin marketplace add rogulia/skills
 /plugin install seo-geo-optimization@rogulia-skills
 ```
 
-The same works from the shell with `claude plugin marketplace add rogulia/skills` and
-`claude plugin install seo-geo-optimization@rogulia-skills`. Updates come through the marketplace.
+From the shell: `claude plugin marketplace add rogulia/skills`, then
+`claude plugin install seo-geo-optimization@rogulia-skills`.
 
-### Codex
+### Codex / ChatGPT
 
-Ask the built-in installer to fetch the skill from this repository:
-
-```text
-$skill-installer install the seo-geo-optimization skill from https://github.com/rogulia/skills
+```bash
+codex plugin marketplace add rogulia/skills
 ```
 
-### Any agent: copy one folder
+Then install the plugin from the **rogulia-skills** marketplace in the plugin browser (`/plugins` in Codex CLI, or the
+Plugins Directory in the ChatGPT desktop app).
 
-Download only the folder you need, then copy it into your agent's skills directory:
+### Cursor
+
+Open **Customize** → **From GitHub Repository** → `rogulia/skills`, then install the plugin you need.
+
+### Any other agent: copy the skill folder
 
 ```bash
 git clone --depth 1 --filter=blob:none --sparse https://github.com/rogulia/skills.git
@@ -49,17 +51,21 @@ cd skills && git sparse-checkout set seo-geo-optimization
 ```
 
 ```bash
-# Claude Code (all projects)
-cp -r seo-geo-optimization ~/.claude/skills/
+cp -r seo-geo-optimization/skills/seo-geo-optimization ~/.agents/skills/
 ```
 
-```bash
-# Codex (all repositories)
-cp -r seo-geo-optimization ~/.agents/skills/
-```
+`~/.agents/skills/` is read by Codex and Cursor. Claude Code uses `~/.claude/skills/`. For a single project, use
+`.agents/skills/` or `.claude/skills/` inside that repository.
 
-For a single project, use `.claude/skills/` (Claude Code) or `.agents/skills/` (Codex) inside that repository. The
-agent picks a skill up when a task matches its description; you can also call it by name.
+## Repository layout
+
+```text
+.claude-plugin/marketplace.json    catalog for Claude Code (Codex also reads it)
+.cursor-plugin/marketplace.json    catalog for Cursor
+.agents/plugins/marketplace.json   catalog for Codex / ChatGPT
+<plugin>/plugin.json               Agent Plugins 1.0.0 manifest
+<plugin>/skills/<skill>/SKILL.md   Agent Skills format, plus references/
+```
 
 ## Author
 

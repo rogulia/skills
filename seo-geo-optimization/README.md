@@ -13,12 +13,26 @@ answer engines.
 - **Operational.** Bot and crawler control (search vs training vs user-triggered), a finding format, evidence rules,
   and a change lifecycle for audits.
 
-**Contents:** `SKILL.md` holds the core rules and the index. `references/` holds the details: bots and robots.txt,
-index and AI controls, canonicals and redirects, sitemaps and rendering, international, content, spam, appearance and
-structured data, commerce and agents, measurement and diagnostics, myths, and the audit procedure. There is also an
-engine reference with crawler tokens and a source list.
+**Contents:**
+- `skills/seo-geo-optimization/SKILL.md`: core rules and the index.
+- `skills/seo-geo-optimization/references/`: the details:
+  - bots and robots.txt;
+  - index and AI controls;
+  - canonicals and redirects;
+  - sitemaps and rendering;
+  - international;
+  - content;
+  - spam;
+  - appearance and structured data;
+  - commerce and agents;
+  - measurement and diagnostics;
+  - myths;
+  - the audit procedure;
+  - an engine reference with crawler tokens, and a source list.
+- `plugin.json` makes the folder a portable [Agent Plugin](https://agent-plugins.org).
 
-**Install:** see the [repository README](../README.md#install-only-the-skills-you-need): Claude Code plugin, Codex installer, or copy this folder.
+**Install:** see the [repository README](../README.md#install-only-the-skills-you-need) for Claude Code, Codex,
+Cursor or a plain folder copy.
 
 **Maintained by** [Iurii Rogulia](https://iurii.rogulia.fi). Want it applied to your site by a human?
 [SEO/GEO audit](https://iurii.rogulia.fi/services/seo-geo-audit).
