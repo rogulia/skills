@@ -1,10 +1,10 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "php-rce-response",
+  "name": "php2shell-response",
   "version": "1.0.0",
   "description": "Triage and remediation for the PHP2Shell remote code execution flaws CVE-2026-109618 and CVE-2026-109619: find affected PHP runtimes, assess exposure, plan the fix, verify it.",
   "author": { "name": "Iurii Rogulia", "url": "https://iurii.rogulia.fi" },
-  "homepage": "https://github.com/rogulia/skills/tree/main/php-rce-response",
+  "homepage": "https://github.com/rogulia/skills/tree/main/php2shell-response",
   "repository": "https://github.com/rogulia/skills",
   "license": "CC-BY-4.0",
   "keywords": ["php", "security", "cve-2026-109618", "cve-2026-109619", "php2shell", "rce", "incident-response", "agent-skills"]

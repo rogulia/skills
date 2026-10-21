@@ -1,5 +1,5 @@
 ---
-name: php-rce-response
+name: php2shell-response
 description: Triage and remediation for the PHP2Shell remote code execution flaws CVE-2026-109618 (RCE via OOM corruption) and CVE-2026-109619 (RCE via stale global state), patched 2026-10-21 in PHP 8.5.12, 8.4.27, 8.3.36 and 8.2.35. Use when asked whether a server, container image, hosting account or codebase is affected by these CVEs, how to patch PHP, which interim mitigations exist, how to verify the fix, or when a PHP runtime is found below a fixed version. Covers inventory of PHP runtimes, SAPI exposure (mod_php, PHP-FPM, FrankenPHP, LSAPI), the settings the advisories name, update routes per platform, and post-fix verification.
 license: CC-BY-4.0
 metadata:

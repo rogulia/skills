@@ -19,8 +19,8 @@ advisory of 2026-10-21. Facts the advisories do not state are marked as unverifi
 run exploit code.
 
 **Contents:**
-- `skills/php-rce-response/SKILL.md`: the procedure and the rules.
-- `skills/php-rce-response/references/`: advisory facts, diagnostic commands, remediation routes and sources.
+- `skills/php2shell-response/SKILL.md`: the procedure and the rules.
+- `skills/php2shell-response/references/`: advisory facts, diagnostic commands, remediation routes and sources.
 - `plugin.json` makes the folder a portable [Agent Plugin](https://agent-plugins.org).
 
 **Install:** see the [repository README](../README.md#install-only-the-skills-you-need) for Claude Code, Codex,

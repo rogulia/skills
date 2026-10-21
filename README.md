@@ -12,7 +12,7 @@ directly instead of relying on its training memory.
 | Skill | What it does |
 |---|---|
 | [seo-geo-optimization](seo-geo-optimization/) | SEO and GEO (generative engine optimization) for search engines and AI answer engines. Built only from official vendor documentation, with an evidence-based audit procedure and a list of common SEO folklore that the docs don't support |
-| [php-rce-response](php-rce-response/) | Triage and remediation for the PHP2Shell remote code execution flaws CVE-2026-109618 and CVE-2026-109619 (patched 2026-10-21): find affected PHP runtimes, assess exposure, plan the update, verify the fix. Built from the two PHP security advisories |
+| [php2shell-response](php2shell-response/) | Triage and remediation for the PHP2Shell remote code execution flaws CVE-2026-109618 and CVE-2026-109619 (patched 2026-10-21): find affected PHP runtimes, assess exposure, plan the update, verify the fix. Built from the two PHP security advisories |
 
 ## Install only the skills you need
 

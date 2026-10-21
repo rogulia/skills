@@ -10,8 +10,8 @@
       "version": "1.0.0"
     },
     {
-      "name": "php-rce-response",
-      "source": "php-rce-response",
+      "name": "php2shell-response",
+      "source": "php2shell-response",
       "description": "Triage and remediation for the PHP2Shell RCE flaws CVE-2026-109618 and CVE-2026-109619: find affected PHP runtimes, assess exposure, plan the update, verify the fix.",
       "version": "1.0.0"
     }
