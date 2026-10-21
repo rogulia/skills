@@ -7,6 +7,12 @@
       "source": { "source": "local", "path": "./seo-geo-optimization" },
       "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
       "category": "Productivity"
+    },
+    {
+      "name": "php-rce-response",
+      "source": { "source": "local", "path": "./php-rce-response" },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+      "category": "Productivity"
     }
   ]
 }
