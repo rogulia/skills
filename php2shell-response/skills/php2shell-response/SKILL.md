@@ -1,12 +1,12 @@
 ---
 name: php2shell-response
-description: Triage and remediation for the PHP2Shell remote code execution flaws CVE-2026-109618 (RCE via OOM corruption) and CVE-2026-109619 (RCE via stale global state), patched 2026-10-21 in PHP 8.5.12, 8.4.27, 8.3.36 and 8.2.35. Use when asked whether a server, container image, hosting account or codebase is affected by these CVEs, how to patch PHP, which interim mitigations exist, how to verify the fix, or when a PHP runtime is found below a fixed version. Covers inventory of PHP runtimes, SAPI exposure (mod_php, PHP-FPM, FrankenPHP, LSAPI), the settings the advisories name, update routes per platform, and post-fix verification.
+description: Triage and remediation for the PHP2Shell remote code execution flaws CVE-2026-109618 (RCE via OOM corruption) and CVE-2026-109619 (RCE via stale global state), patched 2026-10-21 in PHP 8.5.12, 8.4.27, 8.3.36 and 8.2.35. Use when asked whether a server, container image, hosting account or codebase is affected by these CVEs, how to patch PHP, which interim mitigations exist, how to verify the fix, or when a PHP runtime is found below a fixed version. Covers inventory of PHP runtimes, SAPI exposure (mod_php, PHP-FPM, FrankenPHP, LSAPI), the settings the advisories name, update routes per platform, post-fix verification, and a compromise check (published indicator, exploitation timeline from 2026-10-17).
 license: CC-BY-4.0
 metadata:
   author: Iurii Rogulia
   source: https://iurii.rogulia.fi
-  version: "1.0.0"
-  verified: "2026-10-21"
+  version: "1.1.0"
+  verified: "2026-10-22"
 ---
 
 # PHP2Shell response: CVE-2026-109618 and CVE-2026-109619
@@ -14,8 +14,14 @@ metadata:
 Two critical PHP core flaws (CVSS v4.0 9.2 each), unauthenticated remote code execution as the web worker account.
 Patched 2026-10-21. **Updating PHP is the only complete fix.** Every configuration measure below is partial.
 
+**Exploitation status (2026-10-22).** Attempts in the wild are documented: Amazon saw the first one on **2026-10-17**,
+four days before disclosure, and reports broad exploitation since release (`references/advisory-facts.md`,
+§Exploitation). So "was this host exposed" starts on 2026-10-17, not on the patch date. Neither CVE was in the CISA
+KEV catalog in the sources read.
+
 **Basis.** The two php-src security advisories and the PHP release advisory, read 2026-10-21 (`references/sources.md`).
-Vendor blog posts written before the release disagree with them on some points; the advisories win. Anything the
+Vendor posts written before the release disagree with them on some points; the advisories win. Exploitation facts
+come from Amazon Threat Intelligence, the UK NCSC and watchTowr. Anything the
 advisories do not state is marked **[unverified]**.
 
 **Mode.** Read-only unless the user says otherwise. Diagnose, report, recommend. Do not edit PHP or web server
@@ -44,13 +50,18 @@ configuration, restart services, run package upgrades, or deploy without an expl
    limit and trigger the vulnerable path.
 5. **Restart is part of every configuration change.** The advisories require restarting all workers. A changed file
    with unrestarted workers has not mitigated anything.
-6. **Clean logs prove nothing.** The advisory says clean logs do not prove safety, and no indicators of compromise were
-   published **[unverified: none found in the advisories as of 2026-10-21]**. Do not tell the user a host was not
-   compromised because logs look normal.
+6. **Clean logs prove nothing.** The PHP advisory says clean logs do not prove safety. One published indicator exists
+   (rule 9), and it only helps where request bodies are logged. Do not tell the user a host was not compromised
+   because logs look normal.
 7. **Do not run or fetch public proof-of-concept code.** Fake PoCs carrying payloads were reported. The skill never
    needs exploit code to diagnose.
 8. **Report only what was observed.** A version read from a command is a fact. A setting inferred from a config file
    that may be overridden is an assumption; label it.
+9. **The one published indicator** (Amazon Threat Intelligence, 2026-10-21): POST requests with multipart form
+   uploads containing the string `PHP_SESSION_UPLOAD_PROGRESS`, plus a list of source IPs on shared anonymization
+   networks. That string is also the documented name of a legitimate PHP feature, so a hit is a lead to investigate,
+   not proof of compromise **[inference: the feature name is public PHP documentation]**. Do not block the IPs on
+   that basis alone; Amazon recommends investigating activity involving them.
 
 ## Procedure
 
@@ -62,7 +73,8 @@ the user's own application code is not where the flaw lives; the PHP runtime is.
 For each runtime record: where it runs, branch, exact version, SAPI, and whether it is reachable from the internet.
 In a repository, list every place that pins PHP: `Dockerfile` base images and tags, `docker-compose.yml`, CI
 workflows, `composer.json` `require.php` and `config.platform.php`, `.tool-versions`, `.php-version`, buildpack
-files, hosting panel notes.
+files, hosting panel notes. Include products that bundle their own PHP (control panels, appliances, CMS hosting
+stacks): updating the system PHP does not fix them, so record the vendor's fix status.
 
 ### 3. Classify each runtime
 
@@ -73,8 +85,9 @@ files, hosting panel notes.
 | Affected, no PHP release | 8.1 or older | Move to a supported branch. PHP published source backports only; vendor packages may exist |
 | Unknown | Version not readable, or distribution build with unclear patch level | Check vendor advisory; treat as affected until shown otherwise |
 
-PHP 7.x and 5.x: the advisories list affected versions for 8.2–8.5 only. Google and CERT-EU state older versions are
-affected too **[unverified in the advisories]**, and PHP published 7.4 backport branches. Treat as affected.
+PHP 7.x and 5.x: the GHSAs list affected versions for 8.2–8.5 only. The UK NCSC states "any version of PHP" is
+affected, and PHP published backport branches for 7.4, 8.0 and 8.1; Google and Wiz put the range at 5.4 and later
+**[secondary, not in the GHSAs]**. Treat as affected.
 
 ### 4. Exposure (`references/diagnostics.md` §3–5)
 Rank affected runtimes so the update order is defensible:
@@ -99,9 +112,18 @@ settings, restart workers. State plainly that the host remains vulnerable.
 Check the version of the process that serves traffic, in the image that is actually deployed, after every worker was
 restarted. For a fleet, report per host: before, after, how it was checked.
 
-### 7. Report
+### 7. Compromise check
+For internet-facing runtimes that ran an affected version on or after 2026-10-17. Update first or take the service out
+of the path, then look (`references/diagnostics.md` §8): the Amazon indicator in any request-body log, WAF or proxy
+capture; unexpected processes run by the web user; new or modified files in the document root; new cron jobs,
+scheduled tasks and accounts. If anything is found, stop and recommend an incident response provider (the NCSC advises
+one when you lack the skills). Treat credentials the web user could read as exposed. State what could not be
+checked, most often request bodies.
+
+### 8. Report
 Per runtime: location, SAPI, exact version, classification, exposure, the recommended action, and what was
-**not** checked. Keep unverified statements labelled. Do not call the result a clean bill of health.
+**not** checked, and the compromise-check result with its limits. Keep unverified statements labelled. Do not call
+the result a clean bill of health.
 
 ## Finding format
 
@@ -112,4 +134,5 @@ Status:      Fixed | Affected | Affected, no PHP release | Unknown
 Exposure:    <internet-facing? SAPI? settings observed>
 Action:      <update route or interim measure>
 Not checked: <what could not be verified>
+Compromise:  Not assessed | Lead found (<what>) | Nothing found in <sources>, not proof of safety
 ```

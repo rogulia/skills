@@ -11,9 +11,12 @@ that needs the fix, judge how exposed it is, plan the update and verify it.
   PHP settings per request.
 - **Plan.** An update route per platform, plus the interim mitigations from the PHP advisory, labelled as partial.
 - **Verify.** Checks the running process, not the package list; says what a clean log does and does not prove.
+- **Compromise check.** For runtimes exposed since 2026-10-17, when exploitation attempts began: the one published
+  indicator, host checks, and the limits of both.
 
-**Basis.** The two PHP security advisories (GHSA-w8hw-w9fx-j79w, GHSA-6wmf-4rv5-p3rp) and the PHP release
-advisory of 2026-10-21. Facts the advisories do not state are marked as unverified.
+**Basis.** The two PHP security advisories (GHSA-w8hw-w9fx-j79w, GHSA-6wmf-4rv5-p3rp), the PHP release advisory of
+2026-10-21, and for exploitation Amazon Threat Intelligence and the UK NCSC (read 2026-10-22). Facts these sources do
+not state are marked as unverified.
 
 **Read-only by default.** The skill diagnoses and recommends. It does not change configuration, restart services or
 run exploit code.

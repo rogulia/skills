@@ -24,6 +24,14 @@ update within a branch is the lowest-risk change.
 Major or minor branch changes carry application risk: run the test suite and check deprecations before switching.
 Do not bundle an unrelated PHP upgrade into an emergency patch if a same-branch fix is available.
 
+Bundled PHP: appliances and services that ship their own PHP (control panels such as cPanel and Plesk, CMS
+hosting stacks, vendor appliances) are not fixed by updating the system PHP. The NCSC advises watching vendor
+updates; NCSC-NL publishes an inventory of affected products. Record each such product as its own runtime with the
+vendor's fix status.
+
+The Remi repository (`rpms.remirepo.net`) is volunteer-run and the PHP team said it would have no updates on release
+day; use distribution packages or build from source.
+
 Update order: internet-facing `mod_php` and FrankenPHP, then internet-facing FPM/cgi, then LSAPI, then internal web
 services, then CLI-only runtimes. Rebuild every container image that contains PHP; images that nobody redeploys keep
 the old version.
@@ -44,8 +52,9 @@ change, and verify the setting took effect in the running SAPI.
 | `pm.max_requests=1` | Breaks the same-worker condition | Large performance cost; worker per request |
 | Remove obsolete per-request ini values and `PHP_VALUE`/`PHP_ADMIN_VALUE` frontend parameters | Early-diagnostic consumers of CVE-2026-109619 | Check what the application relies on first |
 | Fix attacker-reachable fatal errors and timeouts | Producers of CVE-2026-109619 | Application work; not a substitute for the update |
-| Take the service offline, or put it behind authenticated network access (VPN, ZTNA) | Removes unauthenticated reachability | Availability cost. Listed by Sophos and CERT-EU as interim measures, not in the PHP advisories |
-| WAF rules (for example Cloudflare's) | Known exploit patterns only | A stopgap: traffic that bypasses the WAF is unprotected. Vendor claim, **[unverified]** |
+| Take the service offline, or put it behind authenticated network access (VPN, ZTNA) | Removes unauthenticated reachability | Availability cost. Advised by the UK NCSC when mitigations are impractical, and listed by Sophos and CERT-EU; not in the PHP advisories. The NCSC adds: look for compromise first |
+| Block multipart file uploads at the frontend, after checking what depends on them | Amazon's interim measure; also covers the upload paths used in the indicator | Breaks uploads. Amazon states no configuration-only workaround covers both CVEs |
+| WAF rules (Cloudflare, AWS WAF) | Known exploit patterns only | A stopgap: traffic that bypasses the WAF is unprotected. Vendors describe their own rules; effectiveness **[unverified]** |
 
 Never: `RLIMIT_AS`, `RLIMIT_DATA`. No "fix" through `error_reporting`, `display_errors`, `log_errors` or `@`: the
 advisory says they do not prevent the early diagnostic.
@@ -67,5 +76,5 @@ After the update, the advisory suggests keeping `session.upload_progress.enabled
    advisory naming both CVEs, not the string.
 6. **Record the result** in the finding format of `SKILL.md`, including what was not checked.
 
-If a host was reachable from the internet while vulnerable and the user wants to know if it was attacked, follow
-`references/diagnostics.md` §8: the answer is "cannot be determined from published indicators".
+If a host was reachable from the internet while vulnerable on or after 2026-10-17, run the compromise check in
+`references/diagnostics.md` §8 and report its limits. A quiet result does not show the host was not attacked.

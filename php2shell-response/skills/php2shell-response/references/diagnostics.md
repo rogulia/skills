@@ -118,10 +118,39 @@ Repeated fatal or out-of-memory entries from external addresses are worth report
 the host is clean. Historical logs may exclude relevant severities and some failures occur before PHP writes a
 message.
 
-## 8. After a suspected exploitation attempt
+## 8. Compromise check
 
-No indicators of compromise were published with the advisories **[unverified: none found as of 2026-10-21]**. If
-the user suspects exploitation, do not claim to detect it; recommend preserving logs and process listings, checking
-recently modified files in the document root and writable paths, unexpected child processes of the web user, and
-unusual outbound connections, and treat credentials the web user could read as exposed. State that this is generic
-incident-response practice, not a vendor indicator list.
+Scope: internet-facing runtimes that ran an affected version on or after **2026-10-17** (Amazon's first observed
+attempt). The check is a set of leads, not a verdict.
+
+**The published indicator** (Amazon Threat Intelligence, 2026-10-21): POST requests with multipart form uploads that
+contain `PHP_SESSION_UPLOAD_PROGRESS`. It sits in the request body (a form field name), so ordinary access logs do not
+show it. Look where bodies are captured: a WAF, reverse proxy debug or audit logs, ModSecurity audit logs, a CDN
+security log.
+```bash
+grep -rl 'PHP_SESSION_UPLOAD_PROGRESS' /var/log/modsec_audit* /var/log/nginx /var/log/apache2 /var/log/httpd 2>/dev/null
+```
+The string is also the documented name of PHP's session upload progress feature **[inference]**, so a legitimate
+application may send it. Treat a hit as a lead, check the source and what happened next.
+
+**Source IPs** Amazon published (shared anonymization infrastructure, so a match is a lead, not an identification):
+103.216.220.92, 31.223.184.166, 37.19.200.5, 134.209.159.64, 103.114.163.188, 95.217.98.37.
+```bash
+grep -rE '103\.216\.220\.92|31\.223\.184\.166|37\.19\.200\.5|134\.209\.159\.64|103\.114\.163\.188|95\.217\.98\.37' /var/log/nginx /var/log/apache2 /var/log/httpd 2>/dev/null | head -50
+```
+
+**Host checks** (generic incident-response practice recommended by Amazon, Huntress and the NCSC, not a vendor
+indicator list): unexpected process execution by the web server user, file modification in the document root and other
+writable paths, web shells and new files in the web root, new cron jobs and scheduled tasks, new accounts.
+```bash
+ps -eo pid,user,lstart,args --sort=start_time | grep -E 'www-data|apache|nginx|php' | grep -v grep
+find <docroot> -type f -mtime -6 -printf '%TY-%Tm-%Td %TH:%TM  %u  %p\n' 2>/dev/null | sort | tail -100
+crontab -l -u <webuser> 2>/dev/null; ls -la /etc/cron.d 2>/dev/null
+```
+`-mtime -6` covers roughly the period since 2026-10-17; widen it if the date has moved.
+
+**Limits to report:** no file hashes or paths were published, request bodies are usually not logged, and a quiet
+result proves nothing. If anything is found, preserve logs and process listings, do not clean up first, treat
+credentials the web user could read as exposed, and bring in an incident response provider. The UK NCSC advises
+checking for compromise and backdoors before relying on mitigations when a system cannot be updated or taken
+offline, and using an NCSC-assured provider if the skills are lacking.

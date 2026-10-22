@@ -1,6 +1,6 @@
 # Advisory facts
 
-Source: php-src advisories GHSA-w8hw-w9fx-j79w (CVE-2026-109618) and GHSA-6wmf-4rv5-p3rp (CVE-2026-109619),
+Read 2026-10-21 (GHSAs, release advisory) and 2026-10-22 (exploitation sources). Source: php-src advisories GHSA-w8hw-w9fx-j79w (CVE-2026-109618) and GHSA-6wmf-4rv5-p3rp (CVE-2026-109619),
 and the PHP release advisory, all published 2026-10-21. Anything marked **[unverified]** is not stated there.
 
 ## Versions
@@ -14,12 +14,36 @@ and the PHP release advisory, all published 2026-10-21. Anything marked **[unver
 | 8.6 | pre-release | 8.6.0 RC4 includes the fixes |
 | 8.1, 8.0, 7.4 | no PHP release | source backport branches `PHP-<ver>-CVE-2026-109618-109619` in php-src |
 
-- The advisories list affected ranges for 8.2–8.5 only. Google Cloud and CERT-EU state PHP 5.4 and later are
-  affected **[unverified in the advisories]**.
+- The GHSAs list affected ranges for 8.2–8.5 only. The UK NCSC says "organisations using any version of PHP are
+  affected". Google Cloud and Wiz put the range at PHP 5.4 and later; watchTowr says PHP 5 onward and notes this is not
+  confirmed by an official advisory. No PHP 5 patch exists. None of these is in the GHSAs.
 - Linux distributions and LTS vendors received the patches in advance. Their packages may be fixed under an older
   version string.
 - Both CVEs: CVSS v4.0 9.2, vector `AV:N/AC:H/AT:P/PR:N/UI:N`, high impact on confidentiality, integrity,
   availability. Attack complexity is rated High and attack requirements Present.
+
+## Exploitation (as of 2026-10-22)
+
+- **Amazon Threat Intelligence** (AWS Security Blog, 2026-10-21): first attempt against its MadPot honeypots on
+  **2026-10-17** from a commercial anonymization network, four days before disclosure. More attempts from about
+  02:00 UTC on 2026-10-21 (before the 14:00 UTC release), through 08:00, from other anonymized infrastructure; more
+  proof-of-concept exploits appeared within hours of the release and were used against the sensors almost at once.
+  Payloads and infrastructure differ, which suggests several actors. Amazon cannot yet say whether the attempts would
+  have succeeded against real systems, and says the flaws are now broadly exploited.
+- **watchTowr** reports exploitation in its honeypot network as of 2026-10-21, with no detail of what was seen. Its FAQ
+  is internally inconsistent about whether a vendor patch existed when it was written.
+- **CISA:** reported (NBC News, via secondary summary) as not having observed exploitation on 2026-10-21. Neither
+  CVE was in the CISA KEV catalog in the sources read. **[secondary]**
+- **Huntress:** had not observed exploitation on its partner systems as of 16:30 ET on 2026-10-21 **[secondary,
+  search summary]**.
+- **Published indicator (Amazon):** POST requests with form uploads containing the string
+  `PHP_SESSION_UPLOAD_PROGRESS`. Source IPs, shared anonymization infrastructure: 103.216.220.92 (2026-10-17),
+  31.223.184.166, 37.19.200.5, 134.209.159.64, 103.114.163.188, 95.217.98.37 (all 2026-10-21). Amazon advises
+  investigating activity involving them rather than blocking them outright, and starting investigations from at least
+  2026-10-17. No file hashes or paths were published. The string is the documented name of PHP's session upload
+  progress feature, so it is not specific to exploitation **[inference]**.
+- PHP's advance notice (2026-10-20) reserved the right to release early if details became public or exploitation
+  appeared. Details leaked before the release.
 
 ## CVE-2026-109618: RCE via OOM corruption
 
@@ -63,6 +87,9 @@ Confirmed cases: PHP 8.5 fatal error backtraces with `fatal_error_backtraces` en
 confirmed mod_php exploitation), and the session upload progress lifecycle (RCE validated against mod_php and FPM).
 Other error, exception, object and extension state is conditional: impact is established only once a concrete
 producer and consumer are shown.
+
+Scope statement in the release advisory: "all PHP installations serving web requests, including PHP-FPM, Apache with
+mod_php, php-cgi, FrankenPHP, and LiteSpeed", risk highest for mod_php.
 
 ## SAPI reachability
 
